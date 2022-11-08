@@ -1,15 +1,17 @@
-import "./Create.css";
-
 import { useState, useEffect } from "react";
 import { useHistory } from "react-router";
-import Select from "react-select";
-
+//import hooks
 import { useCollection } from "../../hooks/useCollection";
 import { useAuthContext } from "../../hooks/useAuthContext";
 import { useFirestore } from "../../hooks/useFirestore";
 import { timestamp } from "../../firebase/config";
+//Select library from react-select
+import Select from "react-select";
 
-const category = [
+//styles
+import "./Create.css";
+
+const categories = [
   { value: "development", label: "Development" },
   { value: "design", label: "Design" },
   { value: "sales", label: "Sales" },
@@ -17,14 +19,14 @@ const category = [
 ];
 
 export default function Create() {
+  const history = useHistory();
   //get the users collection from firestore
   const { documents } = useCollection("users");
-  const { addDocument, response } = useFirestore();
-  const { history } = useHistory();
+  const { addDocument, response } = useFirestore("projects");
   const [users, setUsers] = useState([]);
   const { user } = useAuthContext();
 
-  //states
+  //states/form field values
   const [name, setName] = useState("");
   const [details, setDetails] = useState("");
   const [dueDate, setDueDate] = useState("");
@@ -37,7 +39,7 @@ export default function Create() {
   useEffect(() => {
     if (documents) {
       const options = documents.map((user) => {
-        return { value: user, label: user.displayName };
+        return { value: { ...user, id: user.id }, label: user.displayName };
       });
       setUsers(options);
     }
@@ -96,7 +98,7 @@ export default function Create() {
   return (
     <div className="create-form">
       <h2 className="page-title">Create a New Project</h2>
-      <form>
+      <form onSubmit={handleSubmit}>
         <label>
           <span>Project name: </span>
           <input
@@ -107,16 +109,15 @@ export default function Create() {
           />
         </label>
         <label>
-          <span>Details: </span>
-          <input
+          <span>Project Details: </span>
+          <textarea
             required
-            type="text"
             onChange={(e) => setDetails(e.target.value)}
             value={details}
-          />
+          ></textarea>
         </label>
         <label>
-          <span>Due date: </span>
+          <span>Set due date: </span>
           <input
             required
             type="date"
@@ -128,7 +129,7 @@ export default function Create() {
           <span>Project category: </span>
           <Select
             onChange={(option) => setCategory(option)}
-            options={category}
+            options={categories}
           />
         </label>
         <label>
