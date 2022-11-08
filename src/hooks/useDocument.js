@@ -10,21 +10,24 @@ export const useDocument = (collection, id) => {
   useEffect(() => {
     const ref = projectFirestore.collection(collection).doc(id);
 
+    //get realtime update by onSnapshot
     const unsubscribe = ref.onSnapshot(
       (snapshot) => {
-        //need to make sure the doc exists and has data
+        //if the snapshot returns data (the data is in firestore already)
         if (snapshot.data()) {
+          //set document as whatever returns for the document's data
           setDocument({ ...snapshot.data(), id: snapshot.id });
           setError(null);
         } else {
-          setError("No such document exists");
+          setError("no such document exists");
         }
       },
-      (error) => {
-        console.log(error.message);
+      (err) => {
+        console.log(err.message);
         setError("failed to get document");
       }
     );
+
     return () => unsubscribe();
   }, [collection, id]);
 

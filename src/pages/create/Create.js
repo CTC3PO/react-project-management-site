@@ -1,11 +1,12 @@
 import "./Create.css";
 
 import { useState, useEffect } from "react";
+import { useHistory } from "react-router";
 import Select from "react-select";
 
 import { useCollection } from "../../hooks/useCollection";
 import { useAuthContext } from "../../hooks/useAuthContext";
-
+import { useFirestore } from "../../hooks/useFirestore";
 import { timestamp } from "../../firebase/config";
 
 const category = [
@@ -18,7 +19,8 @@ const category = [
 export default function Create() {
   //get the users collection from firestore
   const { documents } = useCollection("users");
-
+  const { addDocument, response } = useFirestore();
+  const { history } = useHistory();
   const [users, setUsers] = useState([]);
   const { user } = useAuthContext();
 
@@ -42,7 +44,7 @@ export default function Create() {
   }, [documents]);
 
   //handleSubmit function
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     //reset error to null everytime we submit
@@ -84,7 +86,10 @@ export default function Create() {
       assignedUsersList,
     };
 
-    console.log(project);
+    await addDocument(project);
+    if (!response.error) {
+      history.push("/");
+    }
   };
 
   //return
@@ -97,7 +102,7 @@ export default function Create() {
           <input
             required
             type="text"
-            onChange={() => setName(e.target.value)}
+            onChange={(e) => setName(e.target.value)}
             value={name}
           />
         </label>
@@ -106,7 +111,7 @@ export default function Create() {
           <input
             required
             type="text"
-            onChange={() => setDetails(e.target.value)}
+            onChange={(e) => setDetails(e.target.value)}
             value={details}
           />
         </label>
@@ -115,7 +120,7 @@ export default function Create() {
           <input
             required
             type="date"
-            onChange={() => setDueDate(e.target.value)}
+            onChange={(e) => setDueDate(e.target.value)}
             value={dueDate}
           />
         </label>

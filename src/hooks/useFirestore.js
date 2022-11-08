@@ -7,11 +7,11 @@ const initialState = {
   isPending: false,
   error: null,
   document: null,
-  success: false,
+  success: null,
 };
 
 //firestoreReducer (state, action): 5 action types
-export const firestoreReducer = (state, action) => {
+const firestoreReducer = (state, action) => {
   switch (action.type) {
     case "IS_PENDING":
       return { isPending: true, error: null, document: null, success: false };
@@ -51,14 +51,14 @@ export const firestoreReducer = (state, action) => {
 
 export const useFirestore = (collection) => {
   //state / useReducer, isCancelled
-  const [response, action] = useReducer(firestoreReducer, initialState);
+  const [response, dispatch] = useReducer(firestoreReducer, initialState);
   const [isCancelled, setIsCancelled] = useState(false);
 
   //collection ref const
   const ref = projectFirestore.collection(collection);
 
   //only dispatch action if not cancelled
-  const dispatchIfNotCancelled = () => {
+  const dispatchIfNotCancelled = (action) => {
     if (!isCancelled) {
       dispatch(action);
     }
@@ -80,19 +80,19 @@ export const useFirestore = (collection) => {
 
   //delete a doc - await function
   const deleteDocument = async (id) => {
-    dispatchIfNotCancelled({ type: "IS_PENDING" });
+    dispatch({ type: "IS_PENDING" });
 
     try {
       await ref.doc(id).delete();
       dispatchIfNotCancelled({ type: "DELETED_DOCUMENT" });
     } catch (err) {
-      dispatchIfNotCancelled({ type: "ERROR", payload: err.message });
+      dispatchIfNotCancelled({ type: "ERROR", payload: "could not delete" });
     }
   };
 
   //update a doc - await function
   const updateDocument = async (id, updates) => {
-    dispatchIfNotCancelled({ type: "IS_PENDING" });
+    dispatch({ type: "IS_PENDING" });
 
     try {
       const updatedDoc = await ref.doc(id).update(updates);
@@ -102,7 +102,7 @@ export const useFirestore = (collection) => {
       });
       return updatedDoc;
     } catch (err) {
-      dispatchIfNotCancelled({ type: "ERROR" });
+      dispatchIfNotCancelled({ type: "ERROR", payload: err });
       return null;
     }
   };

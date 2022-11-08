@@ -1,5 +1,5 @@
-import { useLogout } from "../hooks/useLogout";
 import { Link } from "react-router-dom";
+import { useLogout } from "../hooks/useLogout";
 import { useAuthContext } from "../hooks/useAuthContext";
 
 //logos and styles

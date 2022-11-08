@@ -1,6 +1,6 @@
 import { useCollection } from "../hooks/useCollection";
-import Avatar from "../components/Avatar";
-import "../components/OnlineUsers.css";
+import Avatar from "./Avatar";
+import "./OnlineUsers.css";
 
 export default function OnlineUsers() {
   //this is fetched from users collection/documents from useCollection

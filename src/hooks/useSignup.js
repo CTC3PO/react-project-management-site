@@ -26,7 +26,7 @@ export const useSignup = () => {
         password
       );
 
-      //if no resonse
+      //if no resonse, throw error
       if (!res) {
         throw new Error("Could not complete signup");
       }
@@ -42,7 +42,7 @@ export const useSignup = () => {
       await res.user.updateProfile({ displayName, photoURL: imgURL });
 
       //create a user document with the user's id (using doc method)
-      //this will add to firestore database
+      //this will add to user to firestore database
       await projectFirestore.collection("users").doc(res.user.uid).set({
         online: true,
         displayName,
@@ -52,7 +52,7 @@ export const useSignup = () => {
       //dispatch LOGIN action
       dispatch({ type: "LOGIN", payload: res.user });
 
-      //update state
+      //update states
       if (!isCancelled) {
         setIsPending(false);
         setError(null);

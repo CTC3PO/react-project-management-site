@@ -15,7 +15,7 @@ export default function Login() {
 
   //return a form
   return (
-    <form onSubmit={handleSubmit} className="form">
+    <form onSubmit={handleSubmit} className="auth-form">
       <h2>Login</h2>
       <label>
         <span>Email: </span>
@@ -41,7 +41,7 @@ export default function Login() {
         </button>
       )}
       {!isPending && <button className="btn">Login</button>}
-      {error && <p>{error}</p>}
+      {error && <div className="error">{error}</div>}
     </form>
   );
 }

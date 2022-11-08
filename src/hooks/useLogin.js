@@ -21,7 +21,9 @@ export const useLogin = () => {
     try {
       const res = await projectAuth.signInWithEmailAndPassword(email, password);
 
-      const documentRef = projectAuth.collection("users").doc(res.user.uid);
+      const documentRef = projectFirestore
+        .collection("users")
+        .doc(res.user.uid);
 
       await documentRef.update({ online: true });
 
