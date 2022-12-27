@@ -7,6 +7,7 @@ import templeLogo from "../assets/temple.svg";
 import "./Navbar.css";
 
 export default function Navbar() {
+  // states 
   const { logout, isPending } = useLogout();
   const { user } = useAuthContext();
 
@@ -16,8 +17,9 @@ export default function Navbar() {
         <li className="logo">
           <img src={templeLogo} alt="temple-icon" />
           <span>The Dojo</span>
-        </li>
-
+        </li>        
+        
+        /* if user is not logged in, direct them to Login or Signup page */
         {!user && (
           <>
             <li>
@@ -28,6 +30,8 @@ export default function Navbar() {
             </li>
           </>
         )}
+
+        /* if user is authorized, log them in and only show Logout in the navbar */
         {user && (
           <li>
             {!isPending && (
